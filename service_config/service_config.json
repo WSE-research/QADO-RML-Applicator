@@ -1,0 +1,14 @@
+{
+  "services": [
+    {
+      "mode": "dockerfile",
+      "port": "40168:8080",
+      "image": "bigoli98/qado-rml-applicator",
+      "tag": "latest",
+      "API-KEY": "0dA3UxMfS3CZnA/AmvVjgw=="
+    }
+  ],
+  "ids": {
+    "0": "bigoli98-qado-rml-applicator"
+  }
+}
