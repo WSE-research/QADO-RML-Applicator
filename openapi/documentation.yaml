@@ -1,0 +1,141 @@
+openapi: 3.0.3
+info:
+  title: QADO RML applicator
+  description: |-
+    This is a webservice allowing users to transform a dataset to RDF.
+    
+    This endpoint currently supports the following file formats:
+    * JSON
+    * XML
+    * CSV
+  version: 0.1.0
+paths:
+  /data2rdf:
+    post:
+      responses:
+        '200':
+          description: 'The mapping was successful'
+          content:
+            text/turtle:
+              schema:
+                type: string
+                example: |-
+                  <urn:qado#LABEL-answer-9ace9041> a <urn:qado#ValidAnswer> .
+  
+                  <urn:qado#LABEL-dataset> a <urn:qado#Dataset>;
+                  <http://rdfs.org/ns/void#dataDump> <http://example.com>;
+                  <http://www.w3.org/2000/01/rdf-schema#label> "LABEL";
+                  <http://xmlns.com/foaf/0.1/homepage> "HOMEPAGE" .
+            application/ld+json:
+              schema:
+                type: object
+                example: |-
+                  [
+                      {
+                          "@id": "urn:qado#LABEL-answer-9ace9041",
+                          "@type": [
+                              "urn:qado#ValidAnswer"
+                          ]
+                      },
+                      {
+                          "@id": "urn:qado#LABEL-dataset",
+                          "@type": [
+                              "urn:qado#Dataset"
+                          ],
+                          "http://rdfs.org/ns/void#dataDump": [
+                              {
+                                  "@id": "http://example.com"
+                              }
+                          ],
+                          "http://www.w3.org/2000/01/rdf-schema#label": [
+                              {
+                                  "@value": "LABEL"
+                              }
+                          ],
+                          "http://xmlns.com/foaf/0.1/homepage": [
+                              {
+                                  "@value": "HOMEPAGE"
+                              }
+                          ]
+                      }
+                  ]
+            text/xml:
+              schema:
+                type: object
+                xml:
+                  name: TriX
+                example: |-
+                  <?xml version='1.0'?>
+                  <TriX xmlns='http://www.w3.org/2004/03/trix/trix-1/'>
+                      <graph>
+                          <triple>
+                              <uri>urn:qado#LABEL-answer-9ace9041</uri>
+                              <uri>http://www.w3.org/1999/02/22-rdf-syntax-ns#type</uri>
+                              <uri>urn:qado#ValidAnswer</uri>
+                          </triple>
+                          <triple>
+                              <uri>urn:qado#LABEL-dataset</uri>
+                              <uri>http://rdfs.org/ns/void#dataDump</uri>
+                              <uri>http://example.com</uri>
+                          </triple>
+                          <triple>
+                              <uri>urn:qado#LABEL-dataset</uri>
+                              <uri>http://www.w3.org/1999/02/22-rdf-syntax-ns#type</uri>
+                              <uri>urn:qado#Dataset</uri>
+                          </triple>
+                          <triple>
+                              <uri>urn:qado#LABEL-dataset</uri>
+                              <uri>http://www.w3.org/2000/01/rdf-schema#label</uri>
+                              <typedLiteral datatype='http://www.w3.org/2001/XMLSchema#string'>LABEL</typedLiteral>
+                          </triple>
+                          <triple>
+                              <uri>urn:qado#LABEL-dataset</uri>
+                              <uri>http://xmlns.com/foaf/0.1/homepage</uri>
+                              <typedLiteral datatype='http://www.w3.org/2001/XMLSchema#string'>HOMEPAGE</typedLiteral>
+                          </triple>
+                      </graph>
+                  </TriX>
+            application/trig:
+              schema:
+                type: string
+                example: |-
+                  {
+                    <urn:qado#LABEL-answer-9ace9041> a <urn:qado#ValidAnswer> .
+
+                    <urn:qado#LABEL-dataset> a <urn:qado#Dataset>;
+                      <http://rdfs.org/ns/void#dataDump> <http://example.com>;
+                      <http://www.w3.org/2000/01/rdf-schema#label> "LABEL";
+                      <http://xmlns.com/foaf/0.1/homepage> "HOMEPAGE" .
+                  }
+            application/n-triples:
+              schema:
+                type: string
+                example: |-
+                  <urn:qado#LABEL-answer-9ace9041> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <urn:qado#ValidAnswer> .
+                  <urn:qado#LABEL-dataset> <http://rdfs.org/ns/void#dataDump> <http://example.com> .
+                  <urn:qado#LABEL-dataset> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <urn:qado#Dataset> .
+                  <urn:qado#LABEL-dataset> <http://www.w3.org/2000/01/rdf-schema#label> "LABEL" .
+                  <urn:qado#LABEL-dataset> <http://xmlns.com/foaf/0.1/homepage> "HOMEPAGE" .
+
+        '500':
+          description: 'An error occurred while transforming the data'
+      summary: 'Transform a dataset to RDF'
+      description: 'Using the RMLMapper to transform a plain text dataset to RDF'
+      requestBody:
+        description: Data needed for transformation
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  type: string
+                  description: 'data source content as plain text'
+                rml:
+                  type: string
+                  description: 'RML mapping rules as plain text'
+                output:
+                  required: false
+                  type: string
+                  description: 'Output format of the mapper: "turtle", "jsonld", "trig", "trix", "ntriples" or "nquads"'
+        required: true
