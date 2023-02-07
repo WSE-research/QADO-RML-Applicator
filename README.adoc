@@ -114,56 +114,51 @@ preferred.
 ==== RML mapping as RDF Turtle
 [source,turtle]
 ----
-@prefix rml: <http://semweb.mmlab.be/ns/rml#> .
-@prefix rr: <http://www.w3.org/ns/r2rml#> .
-@prefix owl: <http://www.w3.org/2002/07/owl#> .
-@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
-@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
-@prefix void: <http://rdfs.org/ns/void#> .
-@prefix prov: <http://www.w3.org/ns/prov#> .
-@prefix qado: <urn:qado#> .
-@prefix ql: <http://semweb.mmlab.be/ns/ql#> .
-@prefix wd: <http://www.wikidata.org/entity/> .
-@base <http://example.com#>.
-<#DatasetMapping> a rr:TriplesMap;    
-  rml:logicalSource [        
-    rml:source "example.json";        
-    rml:referenceFormulation ql:JSONPath;        
-    rml:iterator "$.[*]"];    
-    rr:subjectMap [        
-      rr:template "urn:qado#LABEL-dataset";        
-      rr:class qado:Dataset
-    ];    
-    rr:predicateObjectMap [        
-      rr:predicate void:dataDump;        
-      rr:objectMap [            
-        rr:template "http://example.com"
-      ]
-    ];    
-    rr:predicateObjectMap [        
-      rr:predicate rdfs:label;        
-      rr:objectMap [            
-        rr:template "LABEL";            
-        rr:datatype xsd:string]
-      ];    
-      rr:predicateObjectMap [        
-        rr:predicate foaf:homepage;        
-        rr:objectMap [            
-          rr:template "HOMEPAGE";            
-          rr:datatype xsd:string
-        ]
-      ].
-      <#AnswerURIMapping> a rr:TriplesMap;    
-      rml:logicalSource [        
-        rml:source "example.json";        
-        rml:referenceFormulation ql:JSONPath;        
-        rml:iterator "$.[?(@..answerType contains \"entity\")]"
-      ];    
-      rr:subjectMap [        
-        rr:template "urn:qado#LABEL-answer-{id}";        
-        rr:class qado:ValidAnswer
-      ].
+@prefix rr:    <http://www.w3.org/ns/r2rml#> .
+@prefix rml:   <http://semweb.mmlab.be/ns/rml#> .
+@prefix void:  <http://rdfs.org/ns/void#> .
+@prefix owl:   <http://www.w3.org/2002/07/owl#> .
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix ql:    <http://semweb.mmlab.be/ns/ql#> .
+@prefix wd:    <http://www.wikidata.org/entity/> .
+@prefix prov:  <http://www.w3.org/ns/prov#> .
+@prefix foaf:  <http://xmlns.com/foaf/0.1/> .
+@prefix qado:  <urn:qado#> .
+
+<http://example.com#AnswerURIMapping>
+        a                  rr:TriplesMap ;
+        rml:logicalSource  [ rml:iterator              "$.[?(@..answerType contains \"entity\")]" ;
+                             rml:referenceFormulation  ql:JSONPath ;
+                             rml:source                "example.json"
+                           ] ;
+        rr:subjectMap      [ rr:class     qado:ValidAnswer ;
+                             rr:template  "urn:qado#LABEL-answer-{id}"
+                           ] .
+
+<http://example.com#DatasetMapping>
+        a                      rr:TriplesMap ;
+        rml:logicalSource      [ rml:iterator              "$.[*]" ;
+                                 rml:referenceFormulation  ql:JSONPath ;
+                                 rml:source                "example.json"
+                               ] ;
+        rr:predicateObjectMap  [ rr:objectMap  [ rr:datatype  xsd:string ;
+                                                 rr:template  "HOMEPAGE"
+                                               ] ;
+                                 rr:predicate  foaf:homepage
+                               ] ;
+        rr:predicateObjectMap  [ rr:objectMap  [ rr:datatype  xsd:string ;
+                                                 rr:template  "LABEL"
+                                               ] ;
+                                 rr:predicate  rdfs:label
+                               ] ;
+        rr:predicateObjectMap  [ rr:objectMap  [ rr:template  "http://example.com" ] ;
+                                 rr:predicate  void:dataDump
+                               ] ;
+        rr:subjectMap          [ rr:class     qado:Dataset ;
+                                 rr:template  "urn:qado#LABEL-dataset"
+                               ] .
 ----
 
 
@@ -179,7 +174,7 @@ curl --location --request POST 'http://localhost:8080/data2rdf' \
 --header 'Content-Type: application/json' \
 --data-raw '{
     "data": "[    {        \"id\": \"9ace9041\",        \"question\": \"What is the fourth book in the Twilight series?\",        \"translations\":        {            \"de\": \"Welches ist das vierte Buch in der Twilight-Saga-Serie?\",            \"pt\": \"Qual é o quarto livro da série Crespúsculo?\",            \"es\": \"¿Cuál es el cuarto libro de la saga Crepúsculo?\",            \"it\": \"Qual è il quarto libro della serie Twilight?\",            \"fr\": \"Quel est le quatrième livre de la série Twilight ?\"        },        \"questionEntity\":        [            {                \"name\": \"Q44523\",                \"entityType\": \"entity\",                \"label\": \"Twilight\",                \"mention\": \"Twilight\",                \"span\":                [                    31,                    39                ]            },            {                \"name\": 4,                \"entityType\": \"ordinal\",                \"mention\": \"fourth\",                \"span\":                [                    12,                    18                ]            }        ],        \"answer\":        {            \"answerType\": \"entity\",            \"answer\":            [                {                    \"name\": \"Q53945\",                    \"label\":                    {                        \"en\": \"Breaking Dawn\",                        \"de\": \"Bis(s) zum Ende der Nacht\",                        \"es\": \"Amanecer\",                        \"fr\": \"Révélation\",                        \"hi\": null,                        \"it\": \"Breaking Dawn\",                        \"ja\": null,                        \"pt\": \"Amanhecer\"                    }                }            ],            \"mention\": \"Breaking Dawn\"        },        \"category\": \"books\",        \"complexityType\": \"ordinal\"    }]",
-    "rml": "@prefix rml: <http://semweb.mmlab.be/ns/rml#> .@prefix rr: <http://www.w3.org/ns/r2rml#> .@prefix owl: <http://www.w3.org/2002/07/owl#> .@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .@prefix void: <http://rdfs.org/ns/void#> .@prefix prov: <http://www.w3.org/ns/prov#> .@prefix qado: <urn:qado#> .@prefix ql: <http://semweb.mmlab.be/ns/ql#> .@prefix wd: <http://www.wikidata.org/entity/> .@base <http://example.com#>.<#DatasetMapping> a rr:TriplesMap;    rml:logicalSource [        rml:source \"example.json\";        rml:referenceFormulation ql:JSONPath;        rml:iterator \"$.[*]\"];    rr:subjectMap [        rr:template \"urn:qado#LABEL-dataset\";        rr:class qado:Dataset];    rr:predicateObjectMap [        rr:predicate void:dataDump;        rr:objectMap [            rr:template \"http://example.com\"]];    rr:predicateObjectMap [        rr:predicate rdfs:label;        rr:objectMap [            rr:template \"LABEL\";            rr:datatype xsd:string]];    rr:predicateObjectMap [        rr:predicate foaf:homepage;        rr:objectMap [            rr:template \"HOMEPAGE\";            rr:datatype xsd:string]].<#AnswerURIMapping> a rr:TriplesMap;    rml:logicalSource [        rml:source \"example.json\";        rml:referenceFormulation ql:JSONPath;        rml:iterator \"$.[?(@..answerType contains \\\"entity\\\")]\"];    rr:subjectMap [        rr:template \"urn:qado#LABEL-answer-{id}\";        rr:class qado:ValidAnswer]."
+    "rml": "@prefix rml: <http://semweb.mmlab.be/ns/rml#> .@prefix rr: <http://www.w3.org/ns/r2rml#> .@prefix owl: <http://www.w3.org/2002/07/owl#> .@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .@prefix void: <http://rdfs.org/ns/void#> .@prefix prov: <http://www.w3.org/ns/prov#> .@prefix qado: <urn:qado#> .@prefix ql: <http://semweb.mmlab.be/ns/ql#> .@prefix wd: <http://www.wikidata.org/entity/> .@prefix foaf:  <http://xmlns.com/foaf/0.1/> .@base <http://example.com#>.<#DatasetMapping> a rr:TriplesMap;    rml:logicalSource [        rml:source \"example.json\";        rml:referenceFormulation ql:JSONPath;        rml:iterator \"$.[*]\"];    rr:subjectMap [        rr:template \"urn:qado#LABEL-dataset\";        rr:class qado:Dataset];    rr:predicateObjectMap [        rr:predicate void:dataDump;        rr:objectMap [            rr:template \"http://example.com\"]];    rr:predicateObjectMap [        rr:predicate rdfs:label;        rr:objectMap [            rr:template \"LABEL\";            rr:datatype xsd:string]];    rr:predicateObjectMap [        rr:predicate foaf:homepage;        rr:objectMap [            rr:template \"HOMEPAGE\";            rr:datatype xsd:string]].<#AnswerURIMapping> a rr:TriplesMap;    rml:logicalSource [        rml:source \"example.json\";        rml:referenceFormulation ql:JSONPath;        rml:iterator \"$.[?(@..answerType contains \\\"entity\\\")]\"];    rr:subjectMap [        rr:template \"urn:qado#LABEL-answer-{id}\";        rr:class qado:ValidAnswer]."
 }'
 ----
 
@@ -191,7 +186,7 @@ curl --location --request POST 'http://localhost:8080/data2rdf' \
 --header 'Content-Type: application/json' \
 --data-raw '{
     "data": "[    {        \"id\": \"9ace9041\",        \"question\": \"What is the fourth book in the Twilight series?\",        \"translations\":        {            \"de\": \"Welches ist das vierte Buch in der Twilight-Saga-Serie?\",            \"pt\": \"Qual é o quarto livro da série Crespúsculo?\",            \"es\": \"¿Cuál es el cuarto libro de la saga Crepúsculo?\",            \"it\": \"Qual è il quarto libro della serie Twilight?\",            \"fr\": \"Quel est le quatrième livre de la série Twilight ?\"        },        \"questionEntity\":        [            {                \"name\": \"Q44523\",                \"entityType\": \"entity\",                \"label\": \"Twilight\",                \"mention\": \"Twilight\",                \"span\":                [                    31,                    39                ]            },            {                \"name\": 4,                \"entityType\": \"ordinal\",                \"mention\": \"fourth\",                \"span\":                [                    12,                    18                ]            }        ],        \"answer\":        {            \"answerType\": \"entity\",            \"answer\":            [                {                    \"name\": \"Q53945\",                    \"label\":                    {                        \"en\": \"Breaking Dawn\",                        \"de\": \"Bis(s) zum Ende der Nacht\",                        \"es\": \"Amanecer\",                        \"fr\": \"Révélation\",                        \"hi\": null,                        \"it\": \"Breaking Dawn\",                        \"ja\": null,                        \"pt\": \"Amanhecer\"                    }                }            ],            \"mention\": \"Breaking Dawn\"        },        \"category\": \"books\",        \"complexityType\": \"ordinal\"    }]",
-    "rml": "@prefix rml: <http://semweb.mmlab.be/ns/rml#> .@prefix rr: <http://www.w3.org/ns/r2rml#> .@prefix owl: <http://www.w3.org/2002/07/owl#> .@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .@prefix void: <http://rdfs.org/ns/void#> .@prefix prov: <http://www.w3.org/ns/prov#> .@prefix qado: <urn:qado#> .@prefix ql: <http://semweb.mmlab.be/ns/ql#> .@prefix wd: <http://www.wikidata.org/entity/> .@base <http://example.com#>.<#DatasetMapping> a rr:TriplesMap;    rml:logicalSource [        rml:source \"example.json\";        rml:referenceFormulation ql:JSONPath;        rml:iterator \"$.[*]\"];    rr:subjectMap [        rr:template \"urn:qado#LABEL-dataset\";        rr:class qado:Dataset];    rr:predicateObjectMap [        rr:predicate void:dataDump;        rr:objectMap [            rr:template \"http://example.com\"]];    rr:predicateObjectMap [        rr:predicate rdfs:label;        rr:objectMap [            rr:template \"LABEL\";            rr:datatype xsd:string]];    rr:predicateObjectMap [        rr:predicate foaf:homepage;        rr:objectMap [            rr:template \"HOMEPAGE\";            rr:datatype xsd:string]].<#AnswerURIMapping> a rr:TriplesMap;    rml:logicalSource [        rml:source \"example.json\";        rml:referenceFormulation ql:JSONPath;        rml:iterator \"$.[?(@..answerType contains \\\"entity\\\")]\"];    rr:subjectMap [        rr:template \"urn:qado#LABEL-answer-{id}\";        rr:class qado:ValidAnswer].",
+    "rml": "@prefix rml: <http://semweb.mmlab.be/ns/rml#> .@prefix rr: <http://www.w3.org/ns/r2rml#> .@prefix owl: <http://www.w3.org/2002/07/owl#> .@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .@prefix void: <http://rdfs.org/ns/void#> .@prefix prov: <http://www.w3.org/ns/prov#> .@prefix qado: <urn:qado#> .@prefix ql: <http://semweb.mmlab.be/ns/ql#> .@prefix wd: <http://www.wikidata.org/entity/> .@prefix foaf:  <http://xmlns.com/foaf/0.1/> .@base <http://example.com#>.<#DatasetMapping> a rr:TriplesMap;    rml:logicalSource [        rml:source \"example.json\";        rml:referenceFormulation ql:JSONPath;        rml:iterator \"$.[*]\"];    rr:subjectMap [        rr:template \"urn:qado#LABEL-dataset\";        rr:class qado:Dataset];    rr:predicateObjectMap [        rr:predicate void:dataDump;        rr:objectMap [            rr:template \"http://example.com\"]];    rr:predicateObjectMap [        rr:predicate rdfs:label;        rr:objectMap [            rr:template \"LABEL\";            rr:datatype xsd:string]];    rr:predicateObjectMap [        rr:predicate foaf:homepage;        rr:objectMap [            rr:template \"HOMEPAGE\";            rr:datatype xsd:string]].<#AnswerURIMapping> a rr:TriplesMap;    rml:logicalSource [        rml:source \"example.json\";        rml:referenceFormulation ql:JSONPath;        rml:iterator \"$.[?(@..answerType contains \\\"entity\\\")]\"];    rr:subjectMap [        rr:template \"urn:qado#LABEL-answer-{id}\";        rr:class qado:ValidAnswer].",
     "outputFormat": "jsonld"
 }'
 ----
