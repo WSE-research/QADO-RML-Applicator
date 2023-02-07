@@ -1,8 +1,27 @@
+:demodomain: http://demos.swe.htwk-leipzig.de
+:qanarydemoport: 40111
+:automationservicedemoport: 8081
+
+:toc:
+:toclevels: 5
+:toc-placement!:
+:source-highlighter: highlight.js
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+endif::[]
+
 = QADO RML Applicator
 
 This repository contains a webservice that transforms a dataset to RDF.
 
+toc::[]
+
 == Deployment
+
 This service is provided as a Docker Image and can be set up by using
 the following command:
 
