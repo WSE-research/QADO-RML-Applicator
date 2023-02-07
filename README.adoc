@@ -43,7 +43,7 @@ to RDF using custom RML rules. The following request body is required:
 }
 ----
 
-The output format can be set using the *outputFormat* parameter or the
+WARNING: The output format can be set using the *outputFormat* parameter or the
 *HTTP Accept Header*. If both are set, the *Accept Header* is
 preferred.
 
