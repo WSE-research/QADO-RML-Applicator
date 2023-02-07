@@ -139,12 +139,12 @@ preferred.
       rml:logicalSource [        
         rml:source "example.json";        
         rml:referenceFormulation ql:JSONPath;        
-        rml:iterator "$.
-[?(@..answerType contains "entity")]"];    
-rr:subjectMap [        
-    rr:template "urn:qado#LABEL-answer-{id}";        
-    rr:class qado:ValidAnswer
-].
+        rml:iterator "$.[?(@..answerType contains \"entity\")]"
+      ];    
+      rr:subjectMap [        
+        rr:template "urn:qado#LABEL-answer-{id}";        
+        rr:class qado:ValidAnswer
+      ].
 ----
 
 
