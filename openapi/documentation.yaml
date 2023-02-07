@@ -8,7 +8,7 @@ info:
     * JSON
     * XML
     * CSV
-  version: 0.1.0
+  version: 0.2.0
 paths:
   /data2rdf:
     post:
@@ -134,8 +134,7 @@ paths:
                 rml:
                   type: string
                   description: 'RML mapping rules as plain text'
-                output:
-                  required: false
+                outputFormat:
                   type: string
-                  description: 'Output format of the mapper: "turtle", "jsonld", "trig", "trix", "ntriples" or "nquads"'
+                  description: '(Optional) Output format of the mapper: "turtle", "jsonld", "trig", "trix", "ntriples" or "nquads"'
         required: true

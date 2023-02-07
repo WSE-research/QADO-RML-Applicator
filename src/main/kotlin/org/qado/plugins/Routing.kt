@@ -19,7 +19,7 @@ import java.io.StringWriter
 class MappingFailedException(override val message: String): Throwable()
 
 
-class DataMapping(private val rml: String, private val data: String, private val output: String?) {
+class DataMapping(private val rml: String, private val data: String, private var outputFormat: String?) {
     fun applyRml(): String {
         val source = Regex("rml:source [^;]+")
         val tempRml = File.createTempFile("rml", "")
@@ -38,7 +38,7 @@ class DataMapping(private val rml: String, private val data: String, private val
 
             val result = executor.execute(null)[NamedNode("rmlmapper://default.store")]
             val out = StringWriter()
-            result?.write(out, output ?: "turtle")
+            result?.write(out, outputFormat ?: "turtle")
 
             return out.toString()
         }
@@ -51,11 +51,21 @@ class DataMapping(private val rml: String, private val data: String, private val
         }
     }
 
-    fun outputFormat(): ContentType {
-        return if (output == null || output == "turtle") {
+    fun outputFormat(acceptHeader: String): ContentType {
+        if (acceptHeader != "*/*") {
+            outputFormat = when (acceptHeader) {
+                "text/turtle" -> "turtle"
+                "application/ld+json" -> "jsonld"
+                "text/xml" -> "trix"
+                "application/n-triples" -> "ntriples"
+                else -> "turtle"
+            }
+        }
+
+        return if (outputFormat == null || outputFormat == "turtle") {
             ContentType("text", "turtle")
         } else {
-            when (output) {
+            when (outputFormat) {
                 "jsonld" -> ContentType("application", "ld+json")
                 "trix" -> ContentType("text", "xml")
                 "trig" -> ContentType("application", "trig")
@@ -74,10 +84,12 @@ fun Application.configureRouting() {
                     "The API specification can be viewed <a href=\"/openapi\">here</a>.", ContentType.Text.Html)
         }
         post("/data2rdf") {
+            val accept = call.request.accept()
             val body = call.receive<DataMapping>()
 
             try {
-                call.respondText(body.applyRml(), body.outputFormat())
+                val contentType = body.outputFormat(accept!!)
+                call.respondText(body.applyRml(), contentType)
             }
             catch (e: MappingFailedException) {
                 call.respondText(e.message, status = HttpStatusCode.InternalServerError)
