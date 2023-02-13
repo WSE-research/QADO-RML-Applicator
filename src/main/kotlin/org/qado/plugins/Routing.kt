@@ -52,26 +52,33 @@ class DataMapping(private val rml: String, private val data: String, private var
     }
 
     fun outputFormat(acceptHeader: String): ContentType {
-        if (acceptHeader != "*/*") {
-            outputFormat = when (acceptHeader) {
-                "text/turtle" -> "turtle"
-                "application/ld+json" -> "jsonld"
-                "text/xml" -> "trix"
-                "application/n-triples" -> "ntriples"
-                else -> "turtle"
+        val acceptTypes = acceptHeader.split(",")
+
+        for(acceptType in acceptTypes) {
+            if (acceptHeader != "*/*") {
+                outputFormat = when (acceptType) {
+                    "text/turtle" -> "turtle"
+                    "application/ld+json" -> "jsonld"
+                    "text/xml" -> "trix"
+                    "application/n-triples" -> "ntriples"
+                    else -> null
+                }
+            }
+
+            if (outputFormat != null) {
+                break
             }
         }
 
-        return if (outputFormat == null || outputFormat == "turtle") {
-            ContentType("text", "turtle")
-        } else {
-            when (outputFormat) {
-                "jsonld" -> ContentType("application", "ld+json")
-                "trix" -> ContentType("text", "xml")
-                "trig" -> ContentType("application", "trig")
-                "nquads" -> ContentType("application", "n-triples")
-                "ntriples" -> ContentType("application", "n-triples")
-                else -> ContentType.Text.Plain
+        return when (outputFormat) {
+            "jsonld" -> ContentType("application", "ld+json")
+            "trix" -> ContentType("text", "xml")
+            "trig" -> ContentType("application", "trig")
+            "nquads" -> ContentType("application", "n-triples")
+            "ntriples" -> ContentType("application", "n-triples")
+            else -> {
+                outputFormat = "turtle"
+                ContentType("text", "turtle")
             }
         }
     }
