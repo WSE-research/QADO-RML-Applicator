@@ -9,7 +9,9 @@ import io.ktor.serialization.gson.*
 
 
 fun main() {
-    embeddedServer(Netty, port = 8080, host = "0.0.0.0", module = Application::module)
+    embeddedServer(Netty, port = 8080, host = "0.0.0.0", module = Application::module, configure = {
+        responseWriteTimeoutSeconds = 0
+    })
         .start(wait = true)
 }
 
