@@ -8,6 +8,10 @@ plugins {
     id("io.ktor.plugin") version "2.2.2"
 }
 
+kotlin {
+    jvmToolchain(17)
+}
+
 group = "org.qado"
 version = "0.0.1"
 application {
