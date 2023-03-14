@@ -3,12 +3,11 @@
     {
       "mode": "dockerfile",
       "port": "40168:8080",
-      "image": "bigoli98/qado-rml-applicator",
-      "tag": "latest",
-      "API-KEY": "0dA3UxMfS3CZnA/AmvVjgw=="
+      "image": "wseresearch/qado-rml-applicator",
+      "tag": "latest"
     }
   ],
   "ids": {
-    "0": "bigoli98-qado-rml-applicator"
+    "0": "wseresearch-qado-rml-applicator"
   }
 }

@@ -17,16 +17,16 @@ jobs:
         password: ${{ secrets.DOCKER_PASSWORD }}
     - name: Tag docker image
       if: startsWith(github.ref, 'refs/tags/')
-      run: docker tag qado-rml-applicator:latest bigoli98/qado-rml-applicator:latest
+      run: docker tag qado-rml-applicator:latest wseresearch/qado-rml-applicator:latest
     - name: Tag fixed version
       if: startsWith(github.ref, 'refs/tags/')
-      run: docker tag qado-rml-applicator:latest "bigoli98/qado-rml-applicator:${{ github.ref_name }}"
+      run: docker tag qado-rml-applicator:latest "wseresearch/qado-rml-applicator:${{ github.ref_name }}"
     - name: Push latest docker image
       if: startsWith(github.ref, 'refs/tags/')
-      run: docker push bigoli98/qado-rml-applicator:latest
+      run: docker push wseresearch/qado-rml-applicator:latest
     - name: Push fixed docker image version
       if: startsWith(github.ref, 'refs/tags/')
-      run: docker push "bigoli98/qado-rml-applicator:${{ github.ref_name }}"
+      run: docker push "wseresearch/qado-rml-applicator:${{ github.ref_name }}"
     - name: Init update
       if: startsWith(github.ref, 'refs/tags/')
       uses: MindMaster98/docker-service-updater@v0.1.5
