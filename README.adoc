@@ -14,6 +14,10 @@ ifdef::env-github[]
 :warning-caption: :warning:
 endif::[]
 
+++++
+<img align="right" role="right" height="128" src="https://repository-images.githubusercontent.com/431670262/b11511f7-28c4-4d44-a884-9987128b535f"/>
+++++
+
 = QADO RML Applicator
 
 This repository contains a webservice that transforms a dataset to RDF.
